@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>New Tab</title>
+        <meta charset="utf8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="preconnect" href="https://google.com" />
+        <style>
+            @font-face {
+                font-family: Product;
+                src: url(./Product\ Sans.ttf) format('truetype');
+            }
+
+            html {
+                background-color: #efeff4;
+            }
+
+            * {
+                box-sizing: border-box;
+                font-family: Product;
+            }
+
+            ::selection,
+            ::-webkit-selection {
+                background-color: rgba(0, 0, 0, 0.15);
+            }
+
+            #opened {
+                width: 100%;
+                min-height: 100vh;
+                margin: 0;
+                padding: 0 16px;
+                /* background: linear-gradient(
+                        rgba(0, 0, 0, 0) 100%,
+                        transparent 100%
+                    ),
+                    url(./blue_aka.png);
+                background-size: cover;
+                background-position: center; */
+            }
+
+            #bg,
+            #overlay {
+                position: fixed;
+                z-index: -2;
+                top: 0;
+                left: 0;
+                width: 100%;
+                min-height: 100vh;
+            }
+
+            #bg {
+                object-fit: cover;
+                object-position: center;
+            }
+
+            #overlay {
+                z-index: -1;
+                background-color: rgba(0, 0, 0, 0.25);
+            }
+
+            #app {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-self: center;
+                width: 100%;
+                max-width: 620px;
+                min-height: 100vh;
+                margin: 0 auto;
+                padding: 16px 0 52px 0;
+            }
+
+            #time {
+                z-index: 0;
+                top: calc(50vh - 120px - 100px);
+                left: 0;
+                margin: 0;
+                position: absolute;
+                width: 100%;
+                text-align: center;
+                font-size: 120px;
+                font-variant-numeric: tabular-nums;
+                opacity: 0.75;
+                color: #fff;
+                /* text-shadow: 0 8px 32px rgba(255, 255, 255, 0.375);
+                text-shadow: 1px 1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000,
+                    -1px -1px 0 #000; */
+            }
+
+            #search {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                width: 100%;
+                height: 56px;
+                color: #fff;
+                background-color: rgba(0, 0, 0, 0.175);
+                backdrop-filter: blur(4px);
+                /* border: 3px solid #eee; */
+                border-radius: 4px;
+                /* box-shadow: 0 2px 8px rgba(0, 0, 0, 0.0875),
+                    0 4px 16px rgba(0, 0, 0, 0.0875),
+                    0 8px 32px rgba(0, 0, 0, 0.0875); */
+                overflow: hidden;
+            }
+
+            #search > .icon {
+                color: currentColor;
+                margin: 0 12px 0 16px;
+            }
+
+            #search > .input {
+                display: flex;
+                flex: 1;
+                height: inherit;
+                font-weight: 100;
+                padding: 0;
+                color: currentColor;
+                appearance: none;
+                font-size: 24px;
+                background-color: transparent;
+                border: 0;
+                outline: none;
+            }
+
+            #search > .input::placeholder {
+                color: #fff;
+                font-weight: 200;
+            }
+
+            #search > .submit {
+                appearance: none;
+                width: 56px;
+                height: 56px;
+                padding: 0;
+                color: currentColor;
+                background-color: transparent;
+                border: 0;
+                outline: none;
+                transition: color 0.15s ease-out,
+                    background-color 0.15s ease-out;
+                cursor: pointer;
+            }
+
+            #search > .submit:hover {
+                /* color: rgb(0, 123, 255); */
+                background-color: rgba(255, 255, 255, 0.25);
+            }
+
+            #status {
+                display: flex;
+                flex-direction: row;
+                justify-content: center;
+                gap: 16px;
+                width: 100%;
+                color: #fff;
+                transform: translateY(-16px);
+            }
+
+            .status {
+                display: flex;
+                flex-direction: row;
+                justify-content: center;
+                align-items: center;
+                font-size: 16px;
+                font-weight: 400;
+                margin: 0;
+                text-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
+            }
+
+            #battery {
+                margin-left: 8px;
+            }
+
+            #suggestion {
+                position: absolute;
+                z-index: 10;
+                display: flex;
+                flex-direction: column;
+                width: 100%;
+                max-height: calc(50vh - 64px);
+                color: #fff;
+                gap: 4px;
+                margin-top: 8px;
+                padding: 8px 44px;
+                background-color: rgba(0, 0, 0, 0.15);
+                backdrop-filter: blur(8px);
+                border-radius: 4px;
+                overflow-y: auto;
+            }
+
+            .suggest {
+                width: 100%;
+                color: #fff;
+                font-size: 21px;
+                font-weight: 400;
+                text-decoration: none;
+                gap: 4px;
+                padding: 8px 8px;
+                border-radius: inherit;
+                border: 1px solid transparent;
+                outline: none;
+                transition: background-color 0.12s ease-out,
+                    border-color 0.12s ease-out;
+                cursor: pointer;
+            }
+
+            .suggest:hover,
+            .suggest:focus {
+                background-color: rgba(255, 255, 255, 0.125);
+                border-color: #fff;
+            }
+
+            #engine {
+                position: relative;
+                margin: 24px 0 0 0;
+            }
+        </style>
+        <script>
+            const id = (id) => document.getElementById(id)
+
+            document.addEventListener(
+                'DOMContentLoaded',
+                async () => {
+                    let searchBox = id('search-value')
+
+                    let displayedHour = id('hour')
+                    let displayedMinute = id('minute')
+
+                    window.focus()
+                    searchBox.focus()
+
+                    // Clock
+                    let clearSecondClock = false
+
+                    let secondClock
+
+                    let startClock = (initial = false) => {
+                        let time = new Date()
+
+                        let hour = time.getHours()
+                        let minute = time.getMinutes()
+
+                        if (displayedMinute.textContent != minute)
+                            displayedMinute.textContent =
+                                minute <= 9 ? `0${minute}` : minute
+                        else return
+
+                        if (!clearSecondClock && !initial) {
+                            clearSecondClock = true
+                            clearInterval(secondClock)
+                            setInterval(startClock, 60000)
+                        }
+
+                        if (displayedHour.textContent != hour)
+                            displayedHour.textContent = hour
+                    }
+
+                    startClock(true)
+                    secondClock = setInterval(
+                        startClock,
+                        (60 - new Date().getSeconds()) * 1000
+                    )
+
+                    id('search').addEventListener('submit', (event) => {
+                        event.preventDefault()
+
+                        let { value: search } = searchBox
+
+                        switch (true) {
+                            case search.startsWith('gh '):
+                                window.location.assign(
+                                    `http://github.com/${search.slice(3)}`
+                                )
+                                break
+
+                            case search.startsWith(':'):
+                                window.location.assign(
+                                    `http://0.0.0.0${search}`
+                                )
+                                break
+
+                            case search.startsWith('yt '):
+                                window.location.assign(
+                                    `https://www.youtube.com/results?search_query=${search.slice(
+                                        3
+                                    )}`
+                                )
+                                break
+
+                            case search.startsWith('//'):
+                            case /(.*)[\.](.*)$/.test(search):
+                                window.location.assign(`https:${search}`)
+                                break
+
+                            default:
+                                window.location.assign(
+                                    `https://www.google.com/search?q=${search}`
+                                )
+                                break
+                        }
+                    })
+
+                    const battery = await navigator.getBattery()
+
+                    id('battery').textContent = (battery.level * 100).toFixed(0)
+                    battery.onlevelchange = () => {
+                        id('battery').textContent = (
+                            battery.level * 100
+                        ).toFixed(0)
+                    }
+
+                    const charging = (isCharging = false) => {
+                        id('charging').style.display = isCharging
+                            ? 'block'
+                            : 'none'
+                        id('on-battery').style.display = isCharging
+                            ? 'none'
+                            : 'block'
+                    }
+
+                    charging(battery.charging)
+                    battery.onchargingchange = () => charging(battery.charging)
+
+                    const updateWifiStatus = (isOnline = false) => {
+                        id('wifi-on').style.display = isOnline
+                            ? 'block'
+                            : 'none'
+                        id('wifi-off').style.display = isOnline
+                            ? 'none'
+                            : 'block'
+                    }
+
+                    updateWifiStatus(navigator.onLine)
+                    window.addEventListener('offline', () => {
+                        id('network').textContent = 'Offline'
+                    })
+                    window.addEventListener('online', function (e) {
+                        id('network').textContent = 'Online'
+                    })
+
+                    const suggestionTemplate = id('t-suggest')
+                    const suggestionBox = id('suggestion')
+
+                    const updateSuggestion = (suggestions = []) => {
+                        suggestionBox.style.opacity = suggestions.length ? 1 : 0
+
+                        while (suggestionBox.firstChild)
+                            suggestionBox.removeChild(suggestionBox.firstChild)
+
+                        suggestions.map((suggest) => {
+                            let template =
+                                suggestionTemplate.content.cloneNode(true)
+
+                            let suggestion = template.children[0]
+                            suggestion.textContent = suggest
+                            suggestion.href = `https://google.com/search?q=${suggest}`
+
+                            suggestion.addEventListener('keydown', (event) => {
+                                let current = event.currentTarget
+
+                                if (
+                                    current === document.activeElement &&
+                                    event.code === 'ArrowDown'
+                                )
+                                    current.nextElementSibling.focus()
+
+                                if (
+                                    current === document.activeElement &&
+                                    event.code === 'ArrowUp'
+                                )
+                                    if (current.previousElementSibling)
+                                        current.previousElementSibling.focus()
+                                    else searchBox.focus()
+                            })
+
+                            suggestionBox.appendChild(template)
+                        })
+                    }
+
+                    let abortController = new AbortController()
+
+                    const fetchSuggestion = () => {
+                        abortController.abort()
+                        abortController = new AbortController()
+
+                        let value = searchBox.value
+
+                        if (value)
+                            fetch(
+                                `https://google-hint-proxy-wlwt57gpla-as.a.run.app/hint/${value}`,
+                                {
+                                    signal: abortController.signal
+                                }
+                            )
+                                .then((res) => res.json())
+                                .then((suggestions) => {
+                                    updateSuggestion(suggestions || [])
+                                })
+                        else updateSuggestion([])
+                    }
+
+                    searchBox.addEventListener('input', fetchSuggestion, {
+                        passive: true
+                    })
+
+                    searchBox.addEventListener('keydown', (event) => {
+                        if (
+                            searchBox !== document.activeElement ||
+                            event.code !== 'ArrowDown'
+                        )
+                            return
+
+                        if (suggestionBox.firstElementChild)
+                            requestAnimationFrame(() => {
+                                suggestionBox.firstElementChild.focus()
+                            })
+                    })
+                },
+                {
+                    once: true
+                }
+            )
+        </script>
+    </head>
+    <template id="t-suggest">
+        <a class="suggest"></a>
+    </template>
+
+    <body id="opened">
+        <div id="overlay"></div>
+        <video id="bg" autoplay muted loop>
+            <source src="./blue_aka.mp4" />
+        </video>
+        <main id="app">
+            <h1 id="time">
+                <span id="hour">9</span>:<span id="minute">41</span>
+            </h1>
+
+            <div id="status">
+                <p class="status">
+                    <svg
+                        id="wifi-on"
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        class="feather feather-wifi"
+                    >
+                        <path d="M5 12.55a11 11 0 0 1 14.08 0"></path>
+                        <path d="M1.42 9a16 16 0 0 1 21.16 0"></path>
+                        <path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path>
+                        <line x1="12" y1="20" x2="12.01" y2="20"></line>
+                    </svg>
+
+                    <svg
+                        id="wifi-off"
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        class="feather feather-wifi-off"
+                        style="display: none"
+                    >
+                        <line x1="1" y1="1" x2="23" y2="23"></line>
+                        <path
+                            d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"
+                        ></path>
+                        <path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39"></path>
+                        <path d="M10.71 5.05A16 16 0 0 1 22.58 9"></path>
+                        <path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88"></path>
+                        <path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path>
+                        <line x1="12" y1="20" x2="12.01" y2="20"></line>
+                    </svg>
+                </p>
+                <p class="status">
+                    <svg
+                        id="on-battery"
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        class="feather feather-battery"
+                    >
+                        <rect
+                            x="1"
+                            y="6"
+                            width="18"
+                            height="12"
+                            rx="2"
+                            ry="2"
+                        ></rect>
+                        <line x1="23" y1="13" x2="23" y2="11"></line>
+                    </svg>
+
+                    <svg
+                        id="charging"
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        class="feather feather-battery-charging"
+                        style="display: none"
+                    >
+                        <path
+                            d="M5 18H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h3.19M15 6h2a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-3.19"
+                        ></path>
+                        <line x1="23" y1="13" x2="23" y2="11"></line>
+                        <polyline points="11 6 7 12 13 12 9 18"></polyline>
+                    </svg>
+
+                    <span id="battery">42</span>%
+                </p>
+            </div>
+
+            <div id="engine">
+                <form id="search">
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="3"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        class="icon"
+                    >
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    <input
+                        id="search-value"
+                        autocomplete="off"
+                        class="input"
+                        placeholder="Search"
+                        type="text"
+                    />
+                    <button id="search-submit" class="submit">
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            class="feather feather-send"
+                        >
+                            <line x1="22" y1="2" x2="11" y2="13"></line>
+                            <polygon
+                                points="22 2 15 22 11 13 2 9 22 2"
+                            ></polygon>
+                        </svg>
+                    </button>
+                </form>
+                <section id="suggestion" style="opacity: 0">
+                    <a class="suggest">Hi</a>
+                </section>
+            </div>
+        </main>
+    </body>
+</html>

@@ -1,6 +1,8 @@
 # Clear Morning
 Chrome/Edge "New Tab" page.
 
+![Screen Shot 2564-08-28 at 13 51 57](https://user-images.githubusercontent.com/35027979/131209709-94f148a3-1378-4c0b-9e29-490d8061f2c6.png)
+
 Feature:
 - Google suggestion
 - Customizable short cut

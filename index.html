@@ -5,6 +5,10 @@
         <meta charset="utf8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="preconnect" href="https://google.com" />
+        <link
+            rel="preconnect"
+            href="https://google-hint-proxy-wlwt57gpla-as.a.run.app"
+        />
         <style>
             @font-face {
                 font-family: Product;
@@ -95,8 +99,8 @@
                 width: 100%;
                 height: 56px;
                 color: #fff;
-                background-color: rgba(0, 0, 0, 0.175);
-                backdrop-filter: blur(4px);
+                background-color: rgba(0, 0, 0, 0.2);
+                backdrop-filter: blur(12px);
                 /* border: 3px solid #eee; */
                 border-radius: 4px;
                 /* box-shadow: 0 2px 8px rgba(0, 0, 0, 0.0875),
@@ -143,7 +147,8 @@
                 cursor: pointer;
             }
 
-            #search > .submit:hover {
+            #search > .submit:hover,
+            #search > .submit:focus {
                 /* color: rgb(0, 123, 255); */
                 background-color: rgba(255, 255, 255, 0.25);
             }
@@ -184,8 +189,8 @@
                 gap: 4px;
                 margin-top: 8px;
                 padding: 8px 44px;
-                background-color: rgba(0, 0, 0, 0.15);
-                backdrop-filter: blur(8px);
+                background-color: rgba(0, 0, 0, 0.2);
+                backdrop-filter: blur(12px);
                 border-radius: 4px;
                 overflow-y: auto;
             }
@@ -334,10 +339,10 @@
 
                     updateWifiStatus(navigator.onLine)
                     window.addEventListener('offline', () => {
-                        id('network').textContent = 'Offline'
+                        updateWifiStatus(navigator.onLine)
                     })
-                    window.addEventListener('online', function (e) {
-                        id('network').textContent = 'Online'
+                    window.addEventListener('online', () => {
+                        updateWifiStatus(navigator.onLine)
                     })
 
                     const suggestionTemplate = id('t-suggest')
@@ -373,9 +378,22 @@
                                     if (current.previousElementSibling)
                                         current.previousElementSibling.focus()
                                     else searchBox.focus()
+
+                                if (
+                                    current === document.activeElement &&
+                                    event.code === 'Tab'
+                                ) {
+                                    searchBox.value = current.textContent
+                                    requestAnimationFrame(() => {
+                                        searchBox.focus()
+                                        fetchSuggestion()
+                                    })
+                                }
                             })
 
                             suggestionBox.appendChild(template)
+
+                            suggestionBox.scrollTo(0, 0)
                         })
                     }
 
@@ -395,8 +413,12 @@
                                 }
                             )
                                 .then((res) => res.json())
+                                .catch()
                                 .then((suggestions) => {
-                                    updateSuggestion(suggestions || [])
+                                    if(!suggestions && !value)
+                                        updateSuggestion([])
+
+                                    updateSuggestion(suggestions)
                                 })
                         else updateSuggestion([])
                     }

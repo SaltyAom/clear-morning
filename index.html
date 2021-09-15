@@ -7,7 +7,7 @@
         <link rel="preconnect" href="https://google.com" />
         <link
             rel="preconnect"
-            href="https://google-hint-proxy-wlwt57gpla-as.a.run.app"
+            href="https://search.saltyaom.com"
         />
         <style>
             @font-face {
@@ -85,7 +85,7 @@
                 text-align: center;
                 font-size: 120px;
                 font-variant-numeric: tabular-nums;
-                opacity: 0.75;
+                opacity: 0.875;
                 color: #fff;
                 /* text-shadow: 0 8px 32px rgba(255, 255, 255, 0.375);
                 text-shadow: 1px 1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000,
@@ -195,6 +195,18 @@
                 overflow-y: auto;
             }
 
+            .-custom-scrollbar::-webkit-scrollbar {
+                width: .75vw;
+                background-color: transparent;
+            }
+
+            .-custom-scrollbar::-webkit-scrollbar-thumb {
+                background-color: rgba(255,255,255,.375);
+                border-radius: 99px;
+            }
+
+            /* #suggestion::-webkit-scrollbar-thumb */
+
             .suggest {
                 width: 100%;
                 color: #fff;
@@ -214,6 +226,13 @@
             .suggest:hover,
             .suggest:focus {
                 background-color: rgba(255, 255, 255, 0.125);
+            }
+
+            .suggest:hover {
+                border-color: rgba(255, 255, 255, .25);
+            }
+
+            .suggest:focus {
                 border-color: #fff;
             }
 
@@ -348,6 +367,11 @@
                     const suggestionTemplate = id('t-suggest')
                     const suggestionBox = id('suggestion')
 
+                    const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+
+                    if(!isMac)
+                        suggestionBox.classList.add("-custom-scrollbar")
+
                     const updateSuggestion = (suggestions = []) => {
                         suggestionBox.style.opacity = suggestions.length ? 1 : 0
 
@@ -403,18 +427,21 @@
                         abortController.abort()
                         abortController = new AbortController()
 
-                        let value = searchBox.value
+                        // Remove Japanese character joiner
+                        let value = searchBox.value.replace(/\\\b/g, "")
+
+                        console.log(value)
 
                         if (value)
                             fetch(
-                                `https://google-hint-proxy-wlwt57gpla-as.a.run.app/hint/${value}`,
+                                `https://search.saltyaom.com/hint/${value}`,
                                 {
                                     signal: abortController.signal
                                 }
                             )
                                 .then((res) => res.json())
                                 .catch()
-                                .then((suggestions) => {
+                                .then(([_, ...suggestions] = []) => {
                                     if(!suggestions && !value)
                                         updateSuggestion([])
 
@@ -438,6 +465,15 @@
                             requestAnimationFrame(() => {
                                 suggestionBox.firstElementChild.focus()
                             })
+                    })
+
+                    const bg = id("bg")
+                    window.addEventListener("focus", () => {
+                        bg.play()
+                    })
+
+                    window.addEventListener("blur", () => {
+                        bg.pause()
                     })
                 },
                 {

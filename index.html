@@ -1,27 +1,26 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
     <head>
         <title>New Tab</title>
         <meta charset="utf8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="preconnect" href="https://google.com" />
-        <link
-            rel="preconnect"
-            href="https://search.saltyaom.com"
-        />
-        <style>
-            @font-face {
-                font-family: Product;
-                src: url(./Product\ Sans.ttf) format('truetype');
-            }
+        <link rel="preconnect" href="https://search.saltyaom.com" />
 
+        <link
+            rel="icon"
+            href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐳</text></svg>"
+        />
+
+        <style>
             html {
                 background-color: #efeff4;
             }
 
             * {
                 box-sizing: border-box;
-                font-family: Product;
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI',
+                    Roboto, 'Helvetica Neue', Arial, sans-serif;
             }
 
             ::selection,
@@ -60,7 +59,7 @@
 
             #overlay {
                 z-index: -1;
-                background-color: rgba(0, 0, 0, 0.25);
+                background-color: rgba(0, 0, 0, 0.15);
             }
 
             #app {
@@ -84,9 +83,11 @@
                 width: 100%;
                 text-align: center;
                 font-size: 120px;
-                font-variant-numeric: tabular-nums;
-                opacity: 0.875;
+                /* font-variant-numeric: tabular-nums; */
+                font-weight: 600;
+                opacity: 0.9;
                 color: #fff;
+                user-select: none;
                 /* text-shadow: 0 8px 32px rgba(255, 255, 255, 0.375);
                 text-shadow: 1px 1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000,
                     -1px -1px 0 #000; */
@@ -99,10 +100,11 @@
                 width: 100%;
                 height: 56px;
                 color: #fff;
+                border: 1px solid rgba(255, 255, 255, 0.25);
                 background-color: rgba(0, 0, 0, 0.2);
                 backdrop-filter: blur(12px);
                 /* border: 3px solid #eee; */
-                border-radius: 4px;
+                border-radius: 12px;
                 /* box-shadow: 0 2px 8px rgba(0, 0, 0, 0.0875),
                     0 4px 16px rgba(0, 0, 0, 0.0875),
                     0 8px 32px rgba(0, 0, 0, 0.0875); */
@@ -118,7 +120,7 @@
                 display: flex;
                 flex: 1;
                 height: inherit;
-                font-weight: 100;
+                font-weight: 400;
                 padding: 0;
                 color: currentColor;
                 appearance: none;
@@ -126,11 +128,12 @@
                 background-color: transparent;
                 border: 0;
                 outline: none;
+                user-select: none;
             }
 
             #search > .input::placeholder {
                 color: #fff;
-                font-weight: 200;
+                font-weight: 400;
             }
 
             #search > .submit {
@@ -142,7 +145,8 @@
                 background-color: transparent;
                 border: 0;
                 outline: none;
-                transition: color 0.15s ease-out,
+                transition:
+                    color 0.15s ease-out,
                     background-color 0.15s ease-out;
                 cursor: pointer;
             }
@@ -161,6 +165,7 @@
                 width: 100%;
                 color: #fff;
                 transform: translateY(-16px);
+                user-select: none;
             }
 
             .status {
@@ -189,19 +194,21 @@
                 gap: 4px;
                 margin-top: 8px;
                 padding: 8px 44px;
+                border: 1px solid rgba(255, 255, 255, 0.25);
                 background-color: rgba(0, 0, 0, 0.2);
+                box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
                 backdrop-filter: blur(12px);
-                border-radius: 4px;
+                border-radius: 12px;
                 overflow-y: auto;
             }
 
             .-custom-scrollbar::-webkit-scrollbar {
-                width: .75vw;
+                width: 0.75vw;
                 background-color: transparent;
             }
 
             .-custom-scrollbar::-webkit-scrollbar-thumb {
-                background-color: rgba(255,255,255,.375);
+                background-color: rgba(255, 255, 255, 0.375);
                 border-radius: 99px;
             }
 
@@ -218,7 +225,8 @@
                 border-radius: inherit;
                 border: 1px solid transparent;
                 outline: none;
-                transition: background-color 0.12s ease-out,
+                transition:
+                    background-color 0.12s ease-out,
                     border-color 0.12s ease-out;
                 cursor: pointer;
             }
@@ -229,7 +237,7 @@
             }
 
             .suggest:hover {
-                border-color: rgba(255, 255, 255, .25);
+                border-color: rgba(255, 255, 255, 0.25);
             }
 
             .suggest:focus {
@@ -238,38 +246,112 @@
 
             #engine {
                 position: relative;
-                margin: 24px 0 0 0;
+                margin-top: 16px;
+            }
+
+            #pin {
+                position: absolute;
+                display: grid;
+                grid-template-columns: repeat(9, minmax(0, 1fr));
+                gap: 8px;
+                margin-top: 12px;
+                user-select: none;
+            }
+
+            #pin > a,
+            #pin > button {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                color: white;
+                width: 44px;
+                height: 44px;
+                padding: 8px;
+                border-radius: 12px;
+                background-color: rgba(0, 0, 0, 0.125);
+                border: 1px solid rgba(255, 255, 255, 0.25);
+                backdrop-filter: blur(12px);
+                transition: transform 0.1s ease-out;
+            }
+
+            #pin > a:hover,
+            #pin > a:focus,
+            #pin > button:hover,
+            #pin > a:focus {
+                transform: scale(1.2);
+                outline-color: #fff;
+                outline-offset: 4px;
+                outline-width: 1px;
+                /* background-color: rgba(255, 255, 255, 0.125); */
             }
         </style>
         <script>
             const id = (id) => document.getElementById(id)
 
+            window.addEventListener('beforeunload', () => {
+                localStorage.setItem('bg:time', id('bg').currentTime)
+            })
+
+            const composeLink = (search) => {
+                if (search.startsWith('//') || /(.*)[\.](.*)$/.test(search))
+                    return `https:${search}`
+
+                if (search.startsWith(':')) return `http://0.0.0.0${search}`
+
+                if (search.startsWith('gh '))
+                    return `http://github.com/${search.slice(3)}`
+
+                if (search.startsWith('yt '))
+                    return `https://www.youtube.com/results?search_query=${search.slice(
+                        3
+                    )}`
+
+                if (!Number.isNaN(+search) && id('pin').children[+search - 1])
+                    return id('pin').children[+search - 1].href
+
+                if (search.startsWith('ask '))
+                    return `https://www.perplexity.ai/search/new?q=${search.slice(3)}`
+
+                if (search.startsWith('gpt'))
+                    return `https://chat.openai.com/?q=${search}`
+
+                if (search.startsWith('cl '))
+                    return `https://claude.ai/new?q=${search.slice(3)}`
+
+                return `https://www.google.com/search?q=${search}`
+            }
+
             document.addEventListener(
                 'DOMContentLoaded',
                 async () => {
-                    let searchBox = id('search-value')
-
-                    let displayedHour = id('hour')
-                    let displayedMinute = id('minute')
+                    const searchBox = id('search-value')
+                    const displayedHour = id('hour')
+                    const displayedMinute = id('minute')
 
                     window.focus()
                     searchBox.focus()
 
+                    // Continue video from last time
+                    const timestamp = localStorage.getItem('bg:time')
+                    if (timestamp) {
+                        const bg = id('bg')
+                        bg.currentTime = timestamp
+                    }
+
                     // Clock
                     let clearSecondClock = false
-
                     let secondClock
 
-                    let startClock = (initial = false) => {
-                        let time = new Date()
+                    const startClock = (initial = false) => {
+                        const time = new Date()
 
-                        let hour = time.getHours()
-                        let minute = time.getMinutes()
+                        const hour = time.getHours()
+                        const minute = time.getMinutes()
 
-                        if (displayedMinute.textContent != minute)
-                            displayedMinute.textContent =
-                                minute <= 9 ? `0${minute}` : minute
-                        else return
+                        if (displayedMinute.textContent == minute) return
+
+                        displayedMinute.textContent =
+                            minute <= 9 ? `0${minute}` : minute
 
                         if (!clearSecondClock && !initial) {
                             clearSecondClock = true
@@ -282,6 +364,7 @@
                     }
 
                     startClock(true)
+
                     secondClock = setInterval(
                         startClock,
                         (60 - new Date().getSeconds()) * 1000
@@ -290,40 +373,7 @@
                     id('search').addEventListener('submit', (event) => {
                         event.preventDefault()
 
-                        let { value: search } = searchBox
-
-                        switch (true) {
-                            case search.startsWith('gh '):
-                                window.location.assign(
-                                    `http://github.com/${search.slice(3)}`
-                                )
-                                break
-
-                            case search.startsWith(':'):
-                                window.location.assign(
-                                    `http://0.0.0.0${search}`
-                                )
-                                break
-
-                            case search.startsWith('yt '):
-                                window.location.assign(
-                                    `https://www.youtube.com/results?search_query=${search.slice(
-                                        3
-                                    )}`
-                                )
-                                break
-
-                            case search.startsWith('//'):
-                            case /(.*)[\.](.*)$/.test(search):
-                                window.location.assign(`https:${search}`)
-                                break
-
-                            default:
-                                window.location.assign(
-                                    `https://www.google.com/search?q=${search}`
-                                )
-                                break
-                        }
+                        window.location.assign(composeLink(searchBox.value))
                     })
 
                     const battery = await navigator.getBattery()
@@ -367,27 +417,29 @@
                     const suggestionTemplate = id('t-suggest')
                     const suggestionBox = id('suggestion')
 
-                    const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+                    const isMac =
+                        navigator.platform.toUpperCase().indexOf('MAC') >= 0
 
-                    if(!isMac)
-                        suggestionBox.classList.add("-custom-scrollbar")
+                    if (!isMac) suggestionBox.classList.add('-custom-scrollbar')
 
                     const updateSuggestion = (suggestions = []) => {
-                        suggestionBox.style.opacity = suggestions.length ? 1 : 0
+                        suggestionBox.style.display = suggestions.length
+                            ? 'flex'
+                            : 'none'
 
                         while (suggestionBox.firstChild)
                             suggestionBox.removeChild(suggestionBox.firstChild)
 
                         suggestions.map((suggest) => {
-                            let template =
+                            const template =
                                 suggestionTemplate.content.cloneNode(true)
 
-                            let suggestion = template.children[0]
-                            suggestion.textContent = suggest
-                            suggestion.href = `https://google.com/search?q=${suggest}`
+                            const suggestion = template.children[0]
+                            suggestion.textContent = suggest.label
+                            suggestion.href = suggest.href
 
                             suggestion.addEventListener('keydown', (event) => {
-                                let current = event.currentTarget
+                                const current = event.currentTarget
 
                                 if (
                                     current === document.activeElement &&
@@ -401,7 +453,15 @@
                                 )
                                     if (current.previousElementSibling)
                                         current.previousElementSibling.focus()
-                                    else searchBox.focus()
+                                    else {
+                                        searchBox.focus()
+                                        requestAnimationFrame(() => {
+                                            searchBox.setSelectionRange(
+                                                searchBox.value.length,
+                                                searchBox.value.length
+                                            )
+                                        })
+                                    }
 
                                 if (
                                     current === document.activeElement &&
@@ -428,26 +488,58 @@
                         abortController = new AbortController()
 
                         // Remove Japanese character joiner
-                        let value = searchBox.value.replace(/\\\b/g, "")
+                        let value = searchBox.value.replace(/\\\b/g, '')
 
-                        console.log(value)
+                        if (!Number.isNaN(+value)) {
+                            const index = +value
+                            const pin = id('pin').children[index - 1]
 
-                        if (value)
-                            fetch(
-                                `https://search.saltyaom.com/hint/${value}`,
-                                {
-                                    signal: abortController.signal
-                                }
-                            )
-                                .then((res) => res.json())
-                                .catch()
-                                .then(([_, ...suggestions] = []) => {
-                                    if(!suggestions && !value)
-                                        updateSuggestion([])
+                            if (pin) {
+                                let label = pin.href.split('://')[1]
+                                if (label.endsWith('/'))
+                                    label = label.slice(0, -1)
 
-                                    updateSuggestion(suggestions)
-                                })
-                        else updateSuggestion([])
+                                return updateSuggestion([
+                                    { label, href: pin.href }
+                                ])
+                            }
+                        }
+
+                        if (!value) return updateSuggestion([])
+
+                        let prefix = ''
+                        if (
+                            value.startsWith('gh ') ||
+                            value.startsWith('yt ') ||
+                            value.startsWith('cl ')
+                        ) {
+                            prefix = value.slice(0, 2) + ' '
+                            value = value.slice(3)
+                        } else {
+                            if (
+                                value.startsWith('gpt ') ||
+                                value.startsWith('ask ')
+                            ) {
+                                prefix = value.slice(0, 3) + ' '
+                                value = value.slice(4)
+                            }
+                        }
+
+                        fetch(`https://search.saltyaom.com/hint/${value}`, {
+                            signal: abortController.signal
+                        })
+                            .then((res) => res.json())
+                            .catch()
+                            .then(([_, ...suggestions] = []) => {
+                                if (!suggestions && !value) updateSuggestion([])
+
+                                updateSuggestion(
+                                    suggestions.map((suggestion) => ({
+                                        label: suggestion,
+                                        href: composeLink(prefix + suggestion)
+                                    }))
+                                )
+                            })
                     }
 
                     searchBox.addEventListener('input', fetchSuggestion, {
@@ -467,14 +559,14 @@
                             })
                     })
 
-                    const bg = id("bg")
-                    window.addEventListener("focus", () => {
-                        bg.play()
-                    })
+                    // const bg = id('bg')
+                    // window.addEventListener('focus', () => {
+                    //     bg.play()
+                    // })
 
-                    window.addEventListener("blur", () => {
-                        bg.pause()
-                    })
+                    // window.addEventListener('blur', () => {
+                    //     bg.pause()
+                    // })
                 },
                 {
                     once: true
@@ -489,7 +581,7 @@
     <body id="opened">
         <div id="overlay"></div>
         <video id="bg" autoplay muted loop>
-            <source src="./blue_aka.mp4" />
+            <source src="./ba_pv1.mp4" />
         </video>
         <main id="app">
             <h1 id="time">
@@ -615,6 +707,7 @@
                         class="input"
                         placeholder="Search"
                         type="text"
+                        autofocus
                     />
                     <button id="search-submit" class="submit">
                         <svg
@@ -636,8 +729,43 @@
                         </svg>
                     </button>
                 </form>
-                <section id="suggestion" style="opacity: 0">
-                    <a class="suggest">Hi</a>
+
+                <section id="suggestion" style="display: none"></section>
+
+                <section id="pin">
+                    <a href="https://facebook.com">
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 512 512"
+                            fill="currentColor"
+                        >
+                            <path
+                                d="M512 256C512 114.6 397.4 0 256 0S0 114.6 0 256C0 376 82.7 476.8 194.2 504.5V334.2H141.4V256h52.8V222.3c0-87.1 39.4-127.5 125-127.5c16.2 0 44.2 3.2 55.7 6.4V172c-6-.6-16.5-1-29.6-1c-42 0-58.2 15.9-58.2 57.2V256h83.6l-14.4 78.2H287V510.1C413.8 494.8 512 386.9 512 256h0z"
+                            />
+                        </svg>
+                    </a>
+                    <a href="https://x.com">
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 512 512"
+                            fill="currentColor"
+                        >
+                            <path
+                                d="M389.2 48h70.6L305.6 224.2 487 464H345L233.7 318.6 106.5 464H35.8L200.7 275.5 26.8 48H172.4L272.9 180.9 389.2 48zM364.4 421.8h39.1L151.1 88h-42L364.4 421.8z"
+                            />
+                        </svg>
+                    </a>
+                    <a href="https://bsky.app">
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 576 512"
+                            fill="currentColor"
+                        >
+                            <path
+                                d="M407.8 294.7c-3.3-.4-6.7-.8-10-1.3c3.4 .4 6.7 .9 10 1.3zM288 227.1C261.9 176.4 190.9 81.9 124.9 35.3C61.6-9.4 37.5-1.7 21.6 5.5C3.3 13.8 0 41.9 0 58.4S9.1 194 15 213.9c19.5 65.7 89.1 87.9 153.2 80.7c3.3-.5 6.6-.9 10-1.4c-3.3 .5-6.6 1-10 1.4C74.3 308.6-9.1 342.8 100.3 464.5C220.6 589.1 265.1 437.8 288 361.1c22.9 76.7 49.2 222.5 185.6 103.4c102.4-103.4 28.1-156-65.8-169.9c-3.3-.4-6.7-.8-10-1.3c3.4 .4 6.7 .9 10 1.3c64.1 7.1 133.6-15.1 153.2-80.7C566.9 194 576 75 576 58.4s-3.3-44.7-21.6-52.9c-15.8-7.1-40-14.9-103.2 29.8C385.1 81.9 314.1 176.4 288 227.1z"
+                            />
+                        </svg>
+                    </a>
                 </section>
             </div>
         </main>

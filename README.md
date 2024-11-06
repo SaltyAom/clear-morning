@@ -8,12 +8,31 @@ Feature:
 - Customizable short cut
 - Video background
 
-## Prerequisted
+## Prerequisites
 - Chromium Browser
-- [New Tab Changer Extension](https://chrome.google.com/webstore/detail/new-tab-changer/occbjkhimchkolibngmcefpjlbknggfh?hl=en)
+- [Optional] [New Tab Changer Extension](https://chrome.google.com/webstore/detail/new-tab-changer/occbjkhimchkolibngmcefpjlbknggfh?hl=en)
 
 ## Setup
 1. Clone the repo
+
+### Edge, Chrome
+--- 
+
+2. Go to your browser's extensions url
+
+| browser | url                  |
+| ------- | -------------------- |
+| chrome  | chrome://extensions/ |
+| edge    | edge://extensions/   |
+
+3. Enable developer mode
+
+4. Select `Load unpacked`.
+
+5. Select this folder.
+
+### Other browsers
+---
 
 2. Go to new tab changer, point to local repo -> index.html
 

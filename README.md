@@ -15,7 +15,7 @@ Feature:
 ## Setup
 1. Clone the repo
 
-Edge, Chrome
+### Edge, Chrome
 --- 
 
 2. Go to your browser's extensions url
@@ -31,7 +31,7 @@ Edge, Chrome
 
 5. Select this folder.
 
-Other browsers
+### Other browsers
 ---
 
 2. Go to new tab changer, point to local repo -> index.html

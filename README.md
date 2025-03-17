@@ -57,3 +57,10 @@ For example:
 
 ## Customization
 It's a single html file dude, just do whatever you want.
+
+## Search hint
+Search hint is a reverse proxy for Google search suggestion.
+
+By default it's using `https://search.saltyaom.com/hint` but you can deploy your own.
+
+You can find the source code for [search hint here](https://github.com/saltyaom/ghint) which is a 5mb Go binary.

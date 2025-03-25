@@ -726,19 +726,33 @@
                                 localStorage.getItem('forecast-data')
                             )
 
-                        const { latitude, longitude } = await new Promise(
-                            (resolve) => {
-                                navigator.geolocation.getCurrentPosition(
-                                    ({ coords }) => resolve(coords)
-                                )
+                        let resolve, reject
+                        const geolocationPromise = new Promise(
+                            (_resolve, _reject) => {
+                                resolve = _resolve
+                                reject = _reject
                             }
                         )
+
+                        navigator.geolocation.getCurrentPosition(
+                            ({ coords }) => resolve(coords),
+                            (error) => reject(error),
+                            {
+                                enableHighAccuracy: true,
+                                maximumAge: 0
+                            }
+                        )
+
+                        const geolocation = await geolocationPromise
+                        if (!geolocation || geolocation instanceof Error) return
+
+                        const { latitude, longitude } = geolocation
 
                         if (isFetching) return
                         isFetching = true
 
                         const data = await fetch(
-                            `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&hourly=temperature_2m,rain,uv_index,cloud_cover,precipitation_probability&timezone=auto`
+                            `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&hourly=temperature_2m,rain,uv_index,cloud_cover,precipitation_probability&timezone=auto&forecast_days=14`
                         ).then((response) => response.json())
 
                         isFetching = false
@@ -810,8 +824,6 @@
                         id('rain').textContent = ~~prediction
                         id('uv-index').textContent = ~~uvIndex
                     }
-
-                    displayWeather()
 
                     let clearWeatherClock = false
                     let weatherClock
@@ -967,8 +979,8 @@
                 <span id="hour">9</span>:<span id="minute">41</span>
             </h1>
 
-            <div id="status" title="temperature">
-                <div class="status">
+            <div id="status">
+                <div class="status" title="temperature">
                     <div id="weather-icon">
                         <svg
                             xmlns="http://www.w3.org/2000/svg"

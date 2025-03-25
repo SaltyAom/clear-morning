@@ -5,17 +5,20 @@ Chrome/Edge "New Tab" page.
 
 Feature:
 - Google suggestion
-- Customizable short cut
+- Short cut
 - Video background
+- Weather/rain forcast with UV Index
+	- This will ask location permission once every 2 weeks
 
-## Prerequisted
-- Chromium Browser
-- [New Tab Changer Extension](https://chrome.google.com/webstore/detail/new-tab-changer/occbjkhimchkolibngmcefpjlbknggfh?hl=en)
-
-## Setup
+## Setup (Chromium)
 1. Clone the repo
 
 2. Go to new tab changer, point to local repo -> index.html
+
+## Setup (Safari)
+1. Clone the repo
+
+2. Go to Safari Preferences -> General -> Home Page -> point to local repo -> index.html
 
 ## Search bar
 When opening a new tab, the browser search bar will be focused (not the in-page search).
